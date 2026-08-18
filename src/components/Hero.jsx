@@ -17,6 +17,7 @@ const Hero = ({ onPreloadComplete }) => {
 
     const target = "PORTFOLIO";
     const start = "DHARANI PRASANNA";
+    const maxLen = Math.max(start.length, target.length);
     let iterations = 0;
     let intervalId;
     let timeoutId;
@@ -43,20 +44,24 @@ const Hero = ({ onPreloadComplete }) => {
 
       intervalId = setInterval(() => {
         setText(() => {
-          let newText = target.split("").map((letter, index) => {
-            if (index < Math.floor(iterations)) {
-              return target[index]; // Target letter
+          let newText = "";
+          for (let i = 0; i < maxLen; i++) {
+            if (i < Math.floor(iterations)) {
+              if (i < target.length) {
+                newText += target[i];
+              }
+            } else {
+              if (i < start.length) {
+                newText += start[i];
+              }
             }
-            if (index < start.length) {
-              return start[index]; // Original letter
-            }
-            return "";
-          }).join("");
+          }
           return newText;
         });
 
-        if (iterations >= target.length) {
+        if (iterations >= maxLen) {
           clearInterval(intervalId);
+          setText(target); // Ensure final text is exactly PORTFOLIO
 
           // GSAP Animation Sequence
           const tl = gsap.timeline({
@@ -88,8 +93,8 @@ const Hero = ({ onPreloadComplete }) => {
             "-=1.2" // start sliding up around the same time
           );
         }
-        iterations += 1 / 3; // Controls the speed of the letter swap
-      }, 50); // 50ms per step
+        iterations += 0.5; // Smooth letter swap step
+      }, 40);
     });
 
     return () => {
@@ -111,11 +116,11 @@ const Hero = ({ onPreloadComplete }) => {
       {/* Main Text Container (PORTFOLIO Typography + Subtitle & Buttons) */}
       <div
         ref={containerRef}
-        className="absolute top-[50%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none select-none flex flex-col items-center w-full max-w-[95vw] md:max-w-7xl px-4 md:px-8"
+        className="absolute top-[50%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none select-none flex flex-col items-center w-full max-w-[95vw] lg:max-w-[90vw] px-2 md:px-4"
       >
         <h1
           ref={textRef}
-          className="text-[16vw] sm:text-[18vw] md:text-[11rem] lg:text-[14rem] xl:text-[17rem] font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-gray-200 to-gray-700 drop-shadow-2xl leading-none uppercase text-center w-full"
+          className="text-[13vw] sm:text-[13.5vw] md:text-[8rem] lg:text-[10.5rem] xl:text-[12.5rem] 2xl:text-[14rem] font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-gray-200 to-gray-700 drop-shadow-2xl leading-none uppercase text-center w-full whitespace-nowrap"
         >
           {text}
         </h1>

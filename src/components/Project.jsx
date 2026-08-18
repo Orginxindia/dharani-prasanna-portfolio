@@ -1,4 +1,8 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const projects = [
   {
@@ -100,8 +104,49 @@ const clientWorkList = [
 ];
 
 const Project = () => {
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      const rows = containerRef.current.querySelectorAll('.project-row');
+      rows.forEach((row) => {
+        gsap.fromTo(
+          row,
+          { y: 80, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.9,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: row,
+              start: 'top 80%',
+            },
+          }
+        );
+      });
+
+      const clientCards = containerRef.current.querySelectorAll('.client-card');
+      gsap.fromTo(
+        clientCards,
+        { y: 60, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: '.client-work-grid',
+            start: 'top 80%',
+          },
+        }
+      );
+    }
+  }, []);
+
   return (
-    <div id="work" className="bg-[#050505] w-full text-white pt-16 md:pt-28 pb-24 px-6 md:px-16">
+    <div id="work" ref={containerRef} className="bg-[#050505] w-full text-white pt-16 md:pt-28 pb-24 px-6 md:px-16">
 
       {/* Top Header Section */}
       <div className="flex flex-col lg:flex-row justify-between items-start w-full z-10 gap-12 lg:gap-0 mb-20 lg:mb-28">
@@ -133,7 +178,7 @@ const Project = () => {
         {projects.map((proj, idx) => {
           const isEven = idx % 2 === 0;
           return (
-            <div key={proj.name} className={`flex flex-col ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center justify-between gap-12 lg:gap-16 w-full group`}>
+            <div key={proj.name} className={`project-row flex flex-col ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center justify-between gap-12 lg:gap-16 w-full group`}>
 
               {/* Image Side */}
               <div className="w-full lg:w-6/12 overflow-hidden relative aspect-[16/10] bg-[#111] rounded-2xl border border-white/10 group-hover:border-[#ccff00]/50 transition-colors">
@@ -194,9 +239,9 @@ const Project = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-7xl">
+        <div className="client-work-grid grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-7xl">
           {clientWorkList.map((item, i) => (
-            <div key={i} className="p-8 rounded-3xl bg-white/[0.03] border border-white/10 hover:border-[#ccff00]/40 transition-colors flex flex-col justify-between">
+            <div key={i} className="client-card p-8 rounded-3xl bg-white/[0.03] border border-white/10 hover:border-[#ccff00]/40 transition-colors flex flex-col justify-between">
               <div>
                 <span className="text-xs font-mono text-[#ccff00] uppercase tracking-wider">{item.industry}</span>
                 <h3 className="text-xl font-bold text-white mt-2 mb-3">{item.business}</h3>
